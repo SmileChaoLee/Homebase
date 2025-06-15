@@ -1,7 +1,8 @@
 package com.smile.homebase.presentation.uiLayer
 
-import com.smile.retrofitapp.domain.model.Task
+import com.smile.homebase.data.models.Task
 
 sealed class UserIntents {
-    data class TaskWork(val task: Task): UserIntents()
+    data object TaskList: UserIntents()
+    data class AddOneTask(val task: Task): UserIntents()
 }

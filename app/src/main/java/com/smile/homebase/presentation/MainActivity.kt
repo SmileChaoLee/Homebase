@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,15 +37,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.smile.homebase.domain.usecase.TaskUseCase
 import com.smile.homebase.ui.theme.*
 import com.smile.homebase.presentation.uiLayer.UserIntents
 import com.smile.homebase.presentation.viewmodels.TaskViewModel
-import com.smile.retrofitapp.domain.model.Task
+import com.smile.homebase.data.models.Task
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel = TaskViewModel(TaskUseCase())
+    private val viewModel: TaskViewModel by viewModels()
     private val mFontSize = 20.sp
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +52,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             Log.d(TAG, "onCreate.setContent")
             HomebaseTheme {
+                LaunchedEffect(Unit) {
+                    viewModel.handleIntent(UserIntents.TaskList)
+                }
+
                 val buttonListener = object: ButtonClickListener {
                     override fun buttonOkClick(value: Task) {
                         Log.d(TAG, "onCreate.setContent.buttonOkClick")
-                        viewModel.handleIntent(UserIntents.TaskWork(value))
+                        viewModel.handleIntent(UserIntents.AddOneTask(value))
                     }
                     override fun buttonCancelClick(value: Task) {
                     }
