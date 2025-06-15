@@ -109,51 +109,52 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun textFieldValue(hintText: String): String {
-        var textValue by rememberSaveable { mutableStateOf("") }
-        Log.d(TAG, "textFieldValue.textValue = $textValue")
-        TextField(value = textValue,
-            onValueChange = {
-                textValue = it
-                Log.d(TAG, "textFieldValue.textValue = $textValue")
-            },
-            textStyle = LocalTextStyle.current.copy(fontSize = mFontSize),
-            placeholder = {
-                Text(text = hintText, color = Color.LightGray,
-                    fontWeight = FontWeight.Light, fontSize = mFontSize) }
-        )
-        return textValue
-    }
-
-    @Composable
     fun InputTaskProperty(modifier: Modifier = Modifier,
                           buttonListener: ButtonClickListener,
                           dialogTitle: String) {
-        var renew by rememberSaveable { mutableStateOf(true) }
-        Log.d(TAG, "InputTaskProperty.renew = $renew")
-        val okStr = "OK"
-        val noStr = "Cancel"
+        Log.d(TAG, "InputTaskProperty")
         var isOpen by rememberSaveable { mutableStateOf(true) }
         if (isOpen) {
-            val task = Task()
             Column(modifier = modifier.fillMaxWidth().fillMaxHeight()
                 .background(Color(0xffffa500)),
                 horizontalAlignment = Alignment.CenterHorizontally) {
+                val okStr = "OK"
+                val noStr = "Cancel"
+                var titleValue by rememberSaveable { mutableStateOf("") }
+                var statusValue by rememberSaveable { mutableStateOf("") }
                 Column(modifier = Modifier.weight(3.0f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center) {
                     Text(text = dialogTitle, color = Color.Blue,
                         fontWeight = FontWeight.Bold, fontSize = mFontSize)
                     Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
-                    task.title = textFieldValue("Input Title")
+                    TextField(value = titleValue,
+                        onValueChange = {
+                            titleValue = it
+                        },
+                        textStyle = LocalTextStyle.current.copy(fontSize = mFontSize),
+                        placeholder = {
+                            Text(text = "Input Title", color = Color.LightGray,
+                                fontWeight = FontWeight.Light, fontSize = mFontSize) }
+                    )
                     Spacer(modifier = Modifier.fillMaxWidth().height(5.dp))
-                    task.status = textFieldValue("Input Status")
+                    TextField(value = statusValue,
+                        onValueChange = {
+                            statusValue = it
+                        },
+                        textStyle = LocalTextStyle.current.copy(fontSize = mFontSize),
+                        placeholder = {
+                            Text(text = "Input Status", color = Color.LightGray,
+                                fontWeight = FontWeight.Light, fontSize = mFontSize) }
+                    )
                 }
                 Row(modifier = Modifier.weight(1.0f),
                     verticalAlignment = Alignment.CenterVertically) {
                     Button(onClick = {
-                            isOpen = false
-                            buttonListener.buttonCancelClick(task)
+                        isOpen = false
+                        buttonListener.buttonCancelClick(Task(titleValue, statusValue))
+                        titleValue = ""
+                        statusValue = ""
                         }, colors = ButtonColors(
                             containerColor = Color.LightGray,
                             disabledContainerColor = Color.LightGray,
@@ -163,8 +164,9 @@ class MainActivity : ComponentActivity() {
                     ) { Text(text = noStr, fontSize = mFontSize) }
                     Button(modifier = Modifier.padding(start = 30.dp),
                         onClick = {
-                            renew = !renew
-                            buttonListener.buttonOkClick(task)
+                            buttonListener.buttonOkClick(Task(titleValue, statusValue))
+                            titleValue = ""
+                            statusValue = ""
                         }, colors = ButtonColors(
                             containerColor = Color.DarkGray,
                             disabledContainerColor = Color.DarkGray,
